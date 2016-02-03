@@ -3,9 +3,9 @@
 patterns_1= [[(/ OO....../),0],[(/O..O.. ../),6], [(/......OO /),8],[(/.. ..O..O/),2], [(/ ..O..O../),0],[(/...... OO/),6], [(/..O..O.. /),8],[(/OO ....../),2], [(/ ...O...O/),0],[(/..O.O. ../),6], [(/O...O... /),8],[(/.. .O.O../),2], [(/O O....../),1],[(/O.. ..O../),3], [(/......O O/),7],[(/..O.. ..O/),5], [(/. ..O..O./),1],[(/... OO.../),3], [(/.O..O.. ./),7],[(/...OO .../),5]]
 patterns_2= [[(/  X . X  /),1],[(/ XX....../),0],[(/X..X.. ../),6], [(/......XX /),8],[(/.. ..X..X/),2],[(/ ..X..X../),0], [(/...... XX/),6],[(/..X..X.. /),8],[(/XX ....../),2], [(/ ...X...X/),0],[(/..X.X. ../),6],[(/X...X... /),8], [(/.. .X.X../),2],[(/X X....../),1],[(/X.. ..X../),3], [(/......X X/),7],[(/..X.. ..X/),5],[(/. ..X..X./),1], [(/... XX.../),3],[(/.X..X.. ./),7],[(/...XX .../),5], [(/ X X.. ../),0],[(/ ..X.. X /),6],[(/.. ..X X /),8], [(/ X ..X.. /),2],[(/  XX.. ../),0],[(/X.. .. X /),6], [(/.. .XX   /),8],[(/X  ..X.. /),2],[(/ X  ..X../),0], [(/ ..X..  X/),6],[(/..X..  X /),8],[(/X  ..X.. /),2]]
 patterns_3= [[(/OOO....../),'O'], [(/...OOO.../),'O'], [(/......OOO/),'O'], [(/O..O..O../),'O'], [(/.O..O..O./),'O'], [(/..O..O..O/),'O'], [(/O...O...O/),'O'], [(/..O.O.O../),'O'], [(/XXX....../),'X'], [(/...XXX.../),'X'], [(/......XXX/),'X'], [(/X..X..X../),'X'], [(/.X..X..X./),'X'], [(/..X..X..X/),'X'], [(/X...X...X/),'X'], [(/..X.X.X../),'X']]
-board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];X= 'X';O= 'O'; players = [Player1, Player2]; curr_turn = '';
+board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']; Player1 = 'X'; Player2 = 'O'; players = [Player1, Player2]; curr_turn = '';
 
-// players= [X, O];curr_turn= X
+// X= 'X';O= 'O'; players= [X, O];curr_turn= X
 
 comp1 = function(){
   x= get_pattern_1_move()
@@ -40,7 +40,7 @@ move= function(pos,x){
   if(+pos>=0&&+pos<=8&&!isNaN(+pos)&&board[+pos]==' '){
     board.splice(+pos,1,x)
     // Once X or O has been added to the board, change the current player to O if X just played, or to X if O just played.
-      curr_turn= (x==X)? O : X
+      curr_turn= (x==Player1)? Player2 : Player1
       return true
   }
   return false
@@ -121,7 +121,7 @@ play= function(){
       }
       //--If the gameType is human-human, use modified game flow that will let a second player play.
       else if (gameType == "human-human"){
-        playHumanHuman();
+        selectFirstPlayer();
       }
     })
 }
@@ -169,36 +169,61 @@ function playCompComp(){
   }
 } //ends playCompComp
 
-function playHumanHuman(){
-  selectFirstPlayer();
-   console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
-   process.stdin.on('data',function(res){
-     if(move(res, X)){
-       if(winner()||board_filled()) {exit()} else {
-         show();
-         console.log(curr_turn + "enter [0-8] to choose your spot on the board: ")
-         process.stdin.on('data', function(res){
-           if (move(res, O)) {
-             if(winner() || board_filled()) {exit()} else {
-               show();
-              //  Add more specific instructions for show/ make a loop so instructions are clear...
-             }
-           }
-         })
-      }
+playHumanHuman = function(curr_turn){
+  console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
+  process.stdin.on('data', function(res){
+    if(move(res, curr_turn)){
+       if(winner()|| board_filled()) {exit()} else {
+       show();
+       playHumanHuman(curr_turn);
+     }
     }
-   }); //ends function(res)
+  })
+
+  // while(!winner() || !board_filled()){
+  //   show();
+  //   console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
+  //   process.stdin.on('data', function(res){
+  //     if(move(res, curr_turn)){
+  //        if(winner()|| board_filled()) {exit()} else {
+  //        show();
+  //       }
+  //     }
+  //     // console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
+  //   })
+  // }
+
+  //  console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
+  //  process.stdin.on('data',function(res){
+  //    if(move(res, curr_turn)){
+  //      if(winner()|| board_filled()) {exit()} else {
+  //        show();
+  //        console.log(curr_turn + ", enter [0-8] to choose your spot on the board: ")
+  //        process.stdin.on('data', function(res){
+  //          if (move(res, curr_turn)) {
+  //            if(winner() || board_filled()) {exit()} else {
+  //              show();
+  //             //  Add more specific instructions for show/ make a loop so instructions are clear...
+  //            }
+  //          }
+  //        })
+  //     }
+  //   }
+  //  }); //ends function(res)
 }
 
 function selectFirstPlayer(){
-  console.log("Please select which Player will go first. Enter 1 for Player 1, or 2 for Player 2.")
+  console.log("Please select which Player will go first. Enter 1 for Player1 (X), or 2 for Player2 (O).")
   process.stdin.on('data', function(res){
     if (res == 1){
+      playHumanHuman(Player1);
       return curr_turn = Player1;
     } else if (res == 2){
+      playHumanHuman(Player2);
       return curr_turn = Player2;
     }
-  })
+  });
+  // playHumanHuman(curr_turn);
 }
 
 
