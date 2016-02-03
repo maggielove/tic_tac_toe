@@ -112,13 +112,16 @@ play= function(){
     if (gameType === "human-comp") {
       console.log("You've selected Human v. Computer");
       playHumanComp();
+    //--If the gameType is computer-computer, use modified game flow that will let comp play itself.
     } else if (gameType === "comp-comp"){
       console.log("You've selected Computer v. Computer");
       playCompComp();
       }
+      //--If the gameType is human-human, use modified game flow that will let a second player play.
+      else if (gameType == "human-human"){
+        playHumanHuman();
+      }
     })
-    //--If the gameType is human-human, use modified game flow that will let a second player play.
-    //--If the gameType is computer-computer, use modified game flow that will let comp play itself.
 }
 
 function determineGameType(userSelection){
@@ -162,17 +165,27 @@ function playCompComp(){
       if (winner()||board_filled()) {exit()} else {show(); console.log("Comp 2 just moved")}
         }
   }
-
-  // comp1()
-  // if(winner()|| board_filled()) {exit()}
-  // else {
-  //   show();
-  //   setTimeout(comp2(), 1000);
-  //   if (move(x, O)){
-  //   if (winner()||board_filled()) {exit()} else {show(); console.log("Comp 2 just moved")}
-  //     }
-  //   }
 } //ends playCompComp
+
+function playHumanHuman(){
+   console.log("Player 1, enter [0-8] to choose your spot on the board:")
+   process.stdin.on('data',function(res){
+     if(move(res, X)){
+       if(winner()||board_filled()) {exit()} else {
+         show();
+         console.log("Player 2, enter [0-8] to choose your spot on the board: ")
+         process.stdin.on('data', function(res){
+           if (move(res, O)) {
+             if(winner() || board_filled()) {exit()} else {
+               show();
+              //  Add more specific instructions for show/ make a loop so instructions are clear...
+             }
+           }
+         })
+      }
+    }
+   }); //ends function(res)
+}
 
 
 play()
