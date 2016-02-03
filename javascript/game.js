@@ -3,7 +3,9 @@
 patterns_1= [[(/ OO....../),0],[(/O..O.. ../),6], [(/......OO /),8],[(/.. ..O..O/),2], [(/ ..O..O../),0],[(/...... OO/),6], [(/..O..O.. /),8],[(/OO ....../),2], [(/ ...O...O/),0],[(/..O.O. ../),6], [(/O...O... /),8],[(/.. .O.O../),2], [(/O O....../),1],[(/O.. ..O../),3], [(/......O O/),7],[(/..O.. ..O/),5], [(/. ..O..O./),1],[(/... OO.../),3], [(/.O..O.. ./),7],[(/...OO .../),5]]
 patterns_2= [[(/  X . X  /),1],[(/ XX....../),0],[(/X..X.. ../),6], [(/......XX /),8],[(/.. ..X..X/),2],[(/ ..X..X../),0], [(/...... XX/),6],[(/..X..X.. /),8],[(/XX ....../),2], [(/ ...X...X/),0],[(/..X.X. ../),6],[(/X...X... /),8], [(/.. .X.X../),2],[(/X X....../),1],[(/X.. ..X../),3], [(/......X X/),7],[(/..X.. ..X/),5],[(/. ..X..X./),1], [(/... XX.../),3],[(/.X..X.. ./),7],[(/...XX .../),5], [(/ X X.. ../),0],[(/ ..X.. X /),6],[(/.. ..X X /),8], [(/ X ..X.. /),2],[(/  XX.. ../),0],[(/X.. .. X /),6], [(/.. .XX   /),8],[(/X  ..X.. /),2],[(/ X  ..X../),0], [(/ ..X..  X/),6],[(/..X..  X /),8],[(/X  ..X.. /),2]]
 patterns_3= [[(/OOO....../),'O'], [(/...OOO.../),'O'], [(/......OOO/),'O'], [(/O..O..O../),'O'], [(/.O..O..O./),'O'], [(/..O..O..O/),'O'], [(/O...O...O/),'O'], [(/..O.O.O../),'O'], [(/XXX....../),'X'], [(/...XXX.../),'X'], [(/......XXX/),'X'], [(/X..X..X../),'X'], [(/.X..X..X./),'X'], [(/..X..X..X/),'X'], [(/X...X...X/),'X'], [(/..X.X.X../),'X']]
-board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];X= 'X';O= 'O';players= [X, O];curr_turn= X
+board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];X= 'X';O= 'O'; players = [Player1, Player2]; curr_turn = '';
+
+// players= [X, O];curr_turn= X
 
 comp1 = function(){
   x= get_pattern_1_move()
@@ -168,12 +170,13 @@ function playCompComp(){
 } //ends playCompComp
 
 function playHumanHuman(){
-   console.log("Player 1, enter [0-8] to choose your spot on the board:")
+  selectFirstPlayer();
+   console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
    process.stdin.on('data',function(res){
      if(move(res, X)){
        if(winner()||board_filled()) {exit()} else {
          show();
-         console.log("Player 2, enter [0-8] to choose your spot on the board: ")
+         console.log(curr_turn + "enter [0-8] to choose your spot on the board: ")
          process.stdin.on('data', function(res){
            if (move(res, O)) {
              if(winner() || board_filled()) {exit()} else {
@@ -185,6 +188,17 @@ function playHumanHuman(){
       }
     }
    }); //ends function(res)
+}
+
+function selectFirstPlayer(){
+  console.log("Please select which Player will go first. Enter 1 for Player 1, or 2 for Player 2.")
+  process.stdin.on('data', function(res){
+    if (res == 1){
+      return curr_turn = Player1;
+    } else if (res == 2){
+      return curr_turn = Player2;
+    }
+  })
 }
 
 
