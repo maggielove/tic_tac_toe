@@ -5,7 +5,7 @@ patterns_2= [[(/  X . X  /),1],[(/ XX....../),0],[(/X..X.. ../),6], [(/......XX 
 patterns_3= [[(/OOO....../),'O'], [(/...OOO.../),'O'], [(/......OOO/),'O'], [(/O..O..O../),'O'], [(/.O..O..O./),'O'], [(/..O..O..O/),'O'], [(/O...O...O/),'O'], [(/..O.O.O../),'O'], [(/XXX....../),'X'], [(/...XXX.../),'X'], [(/......XXX/),'X'], [(/X..X..X../),'X'], [(/.X..X..X./),'X'], [(/..X..X..X/),'X'], [(/X...X...X/),'X'], [(/..X.X.X../),'X']]
 board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];X= 'X';O= 'O';players= [X, O];curr_turn= X
 
-comp= function(){
+comp1 = function(){
   x= get_pattern_1_move()
     // If there's no clear win for O
     if(x==-1){
@@ -15,7 +15,21 @@ comp= function(){
         if(x==-1){x= get_move()}
     }
   // Once you have the integer representing position (from arrays above and get_pattern_1_move), make the move.
-  move(x,O)
+  move(x, X)
+}
+
+comp2= function(){
+  x= get_pattern_1_move()
+    // If there's no clear win for O
+    if(x==-1){
+      // Block X from winning
+      x= get_pattern_2_move()
+      // If the board does not match any of the patterns_2 patterns, computer moves to take position 4, or game is over.
+        if(x==-1){x= get_move()}
+    }
+  // Once you have the integer representing position (from arrays above and get_pattern_1_move), make the move.
+  console.log("Inside comp2 move");
+  move(x, 0)
 }
 move= function(pos,x){
   if(x!=curr_turn){return false}
@@ -23,7 +37,8 @@ move= function(pos,x){
   // // is available, add X or O to the position.
   if(+pos>=0&&+pos<=8&&!isNaN(+pos)&&board[+pos]==' '){
     board.splice(+pos,1,x)
-      curr_turn= (x==X)? O: X
+    // Once X or O has been added to the board, change the current player to O if X just played, or to X if O just played.
+      curr_turn= (x==X)? O : X
       return true
   }
   return false
@@ -77,22 +92,87 @@ get_pattern_2_move= function(){
     }
   return -1
 }
+
 get_move= function(){
   if(board[4] == ' '){return 4}
   return board.indexOf(' ')
 }
+
 exit= function(){process.exit()}
+
 play= function(){
+  var gameType;
   show()
-    console.log("Enter [0-8]:")
-    process.openStdin().on('data',function(res){
-      if(move(res, X)){
-        if(winner()||board_filled()) {exit()} else {
-          comp()
-      if (winner()||board_filled()) {exit()} else {show()}
-        }
+    /////// Allow user to choose game type (human v. human, comp v. comp, human v. comp)
+    console.log("Choose game type:\n Type 9 for human v. human, \n Type 10 for computer v. computer, \n Type 11 for human v. computer")
+    process.stdin.on('data', function(input){
+      gameType = determineGameType(input);
+    console.log(gameType);
+    // --If the gameType is human-computer, use the game process as written.
+    if (gameType === "human-comp") {
+      console.log("You've selected Human v. Computer");
+      playHumanComp();
+    } else if (gameType === "comp-comp"){
+      console.log("You've selected Computer v. Computer");
+      playCompComp();
       }
     })
+    //--If the gameType is human-human, use modified game flow that will let a second player play.
+    //--If the gameType is computer-computer, use modified game flow that will let comp play itself.
 }
+
+function determineGameType(userSelection){
+  console.log(userSelection.toString());
+  var gameType = '';
+   if (userSelection == 9) {
+      return gameType = "human-human";
+    } else if (userSelection == 10) {
+        return gameType = "comp-comp";
+      } else if (userSelection == 11){
+        return gameType = "human-comp";
+      } else {
+        console.log("Please enter 9, 10 or 11.")
+      }
+}
+
+// If the user selects human v. computer game, follow this game flow:
+function playHumanComp(){
+  console.log("Enter [0-8] to choose your spot on the board:")
+  /////// ALLOW USER TO CHOOSE WHICH PLAYER GOES FIRST
+  /////// ALLOW USER TO DECIDE WHAT MARKER EACH PLAYER WILL MARK SELECTIONS ON THE BOARD WITH.
+  process.stdin.on('data',function(res){
+    if(move(res, X)){
+      if(winner()||board_filled()) {exit()} else {
+        comp2()
+      if (move(x, O)){
+        if (winner()||board_filled()) {exit()} else {show()}
+        }
+      }
+    }
+  })
+}
+
+// If the user selects computer versus computer, follow this game flow.
+function playCompComp(){
+  while (!winner() || !board_filled()){
+    setTimeout(comp1(), 3000);
+    show();
+    setTimeout(comp2(), 3000);
+    if (move(x, O)){
+      if (winner()||board_filled()) {exit()} else {show(); console.log("Comp 2 just moved")}
+        }
+  }
+
+  // comp1()
+  // if(winner()|| board_filled()) {exit()}
+  // else {
+  //   show();
+  //   setTimeout(comp2(), 1000);
+  //   if (move(x, O)){
+  //   if (winner()||board_filled()) {exit()} else {show(); console.log("Comp 2 just moved")}
+  //     }
+  //   }
+} //ends playCompComp
+
 
 play()
