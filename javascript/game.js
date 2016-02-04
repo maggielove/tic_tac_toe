@@ -5,7 +5,7 @@ patterns_2= [[(/  X . X  /),1],[(/ XX....../),0],[(/X..X.. ../),6], [(/......XX 
 patterns_3= [[(/OOO....../),'O'], [(/...OOO.../),'O'], [(/......OOO/),'O'], [(/O..O..O../),'O'], [(/.O..O..O./),'O'], [(/..O..O..O/),'O'], [(/O...O...O/),'O'], [(/..O.O.O../),'O'], [(/XXX....../),'X'], [(/...XXX.../),'X'], [(/......XXX/),'X'], [(/X..X..X../),'X'], [(/.X..X..X./),'X'], [(/..X..X..X/),'X'], [(/X...X...X/),'X'], [(/..X.X.X../),'X']]
 board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']; Player1 = 'X'; Player2 = 'O'; players = [Player1, Player2]; curr_turn = '';
 
-// X= 'X';O= 'O'; players= [X, O];curr_turn= X
+// Player1 = 'X'; Player2 = 'O'
 
 comp1 = function(){
   x= get_pattern_1_move()
@@ -121,12 +121,15 @@ play= function(){
       }
       //--If the gameType is human-human, use modified game flow that will let a second player play.
       else if (gameType == "human-human"){
-        selectFirstPlayer();
+        assignPlayerMarker(Player1);
+        // assignPlayerMarker(Player2);
+        // selectFirstPlayer();
       }
     })
 }
 
 function determineGameType(userSelection){
+  // event.preventDefault();
   console.log(userSelection.toString());
   var gameType = '';
    if (userSelection == 9) {
@@ -213,7 +216,9 @@ playHumanHuman = function(curr_turn){
 }
 
 function selectFirstPlayer(){
-  console.log("Please select which Player will go first. Enter 1 for Player1 (X), or 2 for Player2 (O).")
+  // event.preventDefault();
+  console.log("Please select which Player will go first. Enter 1 for Player1, or 2 for Player2.")
+
   process.stdin.on('data', function(res){
     if (res == 1){
       playHumanHuman(Player1);
@@ -226,5 +231,25 @@ function selectFirstPlayer(){
   // playHumanHuman(curr_turn);
 }
 
+var playerCount = 0;
+function assignPlayerMarker(player){
+  //  event.preventDefault();
+    if (playerCount < 2) {
+      console.log("This is the player: " + player);
+      console.log(player + ", please select a board marker by entering a single keyboard key input")
+    process.stdin.on('data', function(res){
+      console.log("New player marker: " + res);
+      assignPlayerMarker(Player2);
+      playerCount += 1;
+      // return player = res;
+      // assignPlayerMarker
+      // if (player == Player2) {
+      //   selectFirstPlayer();
+      // }
+    })
+ } else {
+   selectFirstPlayer();
+ }
+}
 
 play()
