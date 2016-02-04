@@ -1,3 +1,5 @@
+window.onload = function() {
+
 // patterns_1: possible computer moves; patterns_2: player moves; patterns_3: winning patterns
 
 patterns_1= [[(/ OO....../),0],[(/O..O.. ../),6], [(/......OO /),8],[(/.. ..O..O/),2], [(/ ..O..O../),0],[(/...... OO/),6], [(/..O..O.. /),8],[(/OO ....../),2], [(/ ...O...O/),0],[(/..O.O. ../),6], [(/O...O... /),8],[(/.. .O.O../),2], [(/O O....../),1],[(/O.. ..O../),3], [(/......O O/),7],[(/..O.. ..O/),5], [(/. ..O..O./),1],[(/... OO.../),3], [(/.O..O.. ./),7],[(/...OO .../),5]]
@@ -45,8 +47,8 @@ move= function(pos,x){
   }
   return false
 }
-board_display= function(){return ' '+board[0]+' |'+' '+board[1]+' |'+' '+board[2]+'\n===+===+===\n'+' '+board[3]+' |'+' '+board[4]+' |'+' '+board[5]+'\n===+===+===\n'+' '+board[6]+' |'+' '+board[7]+' |'+' '+board[8]}
-show= function(){console.log(board_display())}
+// board_display= function(){return ' '+board[0]+' |'+' '+board[1]+' |'+' '+board[2]+'\n===+===+===\n'+' '+board[3]+' |'+' '+board[4]+' |'+' '+board[5]+'\n===+===+===\n'+' '+board[6]+' |'+' '+board[7]+' |'+' '+board[8]}
+// show= function(){console.log(board_display())}
 board_filled= function(){
   x = get_move()
   // If the index of the element containing ' ' is -1, meaning it is not found,
@@ -60,21 +62,21 @@ board_filled= function(){
     }
   return false
 }
-winner= function(){
-  board_string= board.join('')
-    the_winner= null
-    for(i=0;i<patterns_3.length;i++){
-      array= board_string.match(patterns_3[i][0])
-        if(array){the_winner= patterns_3[i][1]}
-    }
-  if(the_winner){
-    show()
-    // Add a message saying who won the game.
-      console.log('Game over. ' + the_winner + 's win!')
-      return true
-  }
-  return false
-}
+// winner= function(){
+//   board_string= board.join('')
+//     the_winner= null
+//     for(i=0;i<patterns_3.length;i++){
+//       array= board_string.match(patterns_3[i][0])
+//         if(array){the_winner= patterns_3[i][1]}
+//     }
+//   if(the_winner){
+//     show()
+//     // Add a message saying who won the game.
+//       console.log('Game over. ' + the_winner + 's win!')
+//       return true
+//   }
+//   return false
+// }
 get_pattern_1_move= function(){
   board_string= board.join('')
     for(i=0;i<patterns_1.length;i++){
@@ -104,11 +106,10 @@ exit= function(){process.exit()}
 
 play= function(){
   var gameType;
-  show()
+  // show()
     /////// Allow user to choose game type (human v. human, comp v. comp, human v. comp)
-    console.log("Choose game type:\n Type 9 for human v. human, \n Type 10 for computer v. computer, \n Type 11 for human v. computer")
-    process.stdin.on('data', function(input){
-      gameType = determineGameType(input);
+    var playerGameChoice = window.prompt("Choose game type:\n Type 9 for human v. human, \n Type 10 for computer v. computer, \n Type 11 for human v. computer");
+    gameType = determineGameType(playerGameChoice);
     console.log(gameType);
     // --If the gameType is human-computer, use the game process as written.
     if (gameType === "human-comp") {
@@ -125,7 +126,7 @@ play= function(){
         // assignPlayerMarker(Player2);
         // selectFirstPlayer();
       }
-    })
+
 }
 
 function determineGameType(userSelection){
@@ -173,83 +174,92 @@ function playCompComp(){
 } //ends playCompComp
 
 playHumanHuman = function(curr_turn){
-  console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
-  process.stdin.on('data', function(res){
-    if(move(res, curr_turn)){
-       if(winner()|| board_filled()) {exit()} else {
-       show();
-       playHumanHuman(curr_turn);
+  alert('Take turns clicking to select your spot on the board, starting with ' + curr_turn);
+  var boxes = document.getElementsByClassName("box");
+  var boxesClicked = 0;
+  for (var i = 0; i < boxes.length; i++){
+    boxes[i].addEventListener('click', function(){
+      winnerFound();
+      if (winnerFound || boxesClicked == 9) {
+        alert("Game over.");
+      } else {
+      console.log('clicked div');
+      this.innerHTML = curr_turn;
+      curr_turn= Player1? Player2 : Player1;
+      boxesClicked += 1;
+      // if(move(res, curr_turn)){
+      //    if(winner()|| board_filled()) {exit()} else {
+      //    show();
+      //    playHumanHuman(curr_turn);
+      //  }
+      // }
      }
-    }
-  })
-
-  // while(!winner() || !board_filled()){
-  //   show();
-  //   console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
-  //   process.stdin.on('data', function(res){
-  //     if(move(res, curr_turn)){
-  //        if(winner()|| board_filled()) {exit()} else {
-  //        show();
-  //       }
-  //     }
-  //     // console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
-  //   })
-  // }
-
-  //  console.log(curr_turn + ", enter [0-8] to choose your spot on the board:")
-  //  process.stdin.on('data',function(res){
-  //    if(move(res, curr_turn)){
-  //      if(winner()|| board_filled()) {exit()} else {
-  //        show();
-  //        console.log(curr_turn + ", enter [0-8] to choose your spot on the board: ")
-  //        process.stdin.on('data', function(res){
-  //          if (move(res, curr_turn)) {
-  //            if(winner() || board_filled()) {exit()} else {
-  //              show();
-  //             //  Add more specific instructions for show/ make a loop so instructions are clear...
-  //            }
-  //          }
-  //        })
-  //     }
-  //   }
-  //  }); //ends function(res)
+    })
+  }
 }
 
 function selectFirstPlayer(){
   // event.preventDefault();
-  console.log("Please select which Player will go first. Enter 1 for Player1, or 2 for Player2.")
-
-  process.stdin.on('data', function(res){
-    if (res == 1){
+  var firstPlayerSelection = window.prompt("Please select which Player will go first. Enter 1 for Player1, or 2 for Player2.")
+    if (firstPlayerSelection == 1){
       playHumanHuman(Player1);
       return curr_turn = Player1;
-    } else if (res == 2){
+    } else if (firstPlayerSelection == 2){
       playHumanHuman(Player2);
       return curr_turn = Player2;
     }
-  });
   // playHumanHuman(curr_turn);
 }
 
 var playerCount = 0;
 function assignPlayerMarker(player){
-  //  event.preventDefault();
+    // event.preventDefault();
     if (playerCount < 2) {
       console.log("This is the player: " + player);
-      console.log(player + ", please select a board marker by entering a single keyboard key input")
-    process.stdin.on('data', function(res){
-      console.log("New player marker: " + res);
-      assignPlayerMarker(Player2);
+      var markerChoice = window.prompt(player + ", please select a board marker by entering a single keyboard key input")
       playerCount += 1;
-      // return player = res;
-      // assignPlayerMarker
-      // if (player == Player2) {
-      //   selectFirstPlayer();
-      // }
-    })
+      player = markerChoice;
+      console.log(player);
+      assignPlayerMarker(Player2);
+      return player;
+     } else {
+       selectFirstPlayer();
+     }
+}
+
+winnerFound = function(){
+  var boxOne = document.getElementsByClassName('box')[0];
+  var boxTwo = document.getElementsByClassName('box')[1];
+  var boxThree = document.getElementsByClassName('box')[2];
+  var boxFour = document.getElementsByClassName('box')[3];
+  var boxFive = document.getElementsByClassName('box')[4];
+  var boxSix = document.getElementsByClassName('box')[5];
+  var boxSeven = document.getElementsByClassName('box')[6];
+  var boxEight = document.getElementsByClassName('box')[7];
+  var boxNine = document.getElementsByClassName('box')[8];
+  console.log(boxOne.innerHTML);
+  console.log(boxFive.innerHTML);
+  if (boxOne.innerHTML === boxTwo.innerHTML === boxThree.innerHTML ||
+      boxFour.innerHTML === boxFive.innerHTML === boxSix.innerHTML ||
+      boxSeven.innerHTML === boxEight.innerHTML === boxNine.innerHTML ||
+      boxOne.innerHTML === boxFour.innerHTML === boxSeven.innerHTML ||
+      boxTwo.innerHTML === boxFive.innerHTML === boxEight.innerHTML ||
+      boxThree.innerHTML === boxSix.innerHTML === boxNine.innerHTML ||
+      boxOne.innerHTML === boxFive.innerHTML === boxNine.innerHTML ||
+      boxThree.innerHTML === boxFive.innerHTML === boxSeven.innerHTML
+    ){
+   return winnerFound = true;
  } else {
-   selectFirstPlayer();
+   return winnerFound = false;
  }
 }
 
 play()
+
+// module.exports = {
+//   play: play,
+//   determineGameType: determineGameType,
+//   assignPlayerMarker: assignPlayerMarker
+// }
+
+}; //ends window.onload
