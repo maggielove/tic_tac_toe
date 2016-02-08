@@ -124,7 +124,7 @@ play= function(){
       }
       //--If the gameType is human-human, use modified game flow that will let a second player play.
       else if (gameType == "human-human"){
-        assignPlayerMarker(Player1);
+        assignPlayerMarker();
         // assignPlayerMarker(Player2);
         // selectFirstPlayer();
       }
@@ -187,14 +187,17 @@ playHumanHuman = function(curr_turn){
       } else if (boxesClicked === 9) {
         alert("Game over. All boxes clicked.")
       } else {
-      this.innerHTML = curr_turn;
-      boxesClicked += 1;
-      console.log('boxes clicked:' + boxesClicked);
-      if (curr_turn == Player2 ) {
-        return curr_turn = Player1;
-      } else {
-        return curr_turn = Player2;
-       }
+        boxesClicked += 1;
+        console.log('boxes clicked:' + boxesClicked);
+        if (curr_turn == Player2 ) {
+          this.innerHTML = playerMarkers[0]
+          console.log(this.innerHTML);
+          return curr_turn = Player1;
+        } else {
+          this.innerHTML = playerMarkers[1]
+          console.log(this.innerHTML);
+          return curr_turn = Player2;
+         }
       }
     })
   }
@@ -213,27 +216,19 @@ function selectFirstPlayer(){
   // playHumanHuman(curr_turn);
 }
 
-var playerCount = 0;
+// var playerCount = 0;
+var playerMarkers = [];
 var markerChoice = '';
 function assignPlayerMarker(){
-
-  markerChoice = window.prompt(Player1 + ", please select a board marker by entering a single keyboard key input");
-  Player1 = markerChoice;
-  console.log('Player\'s marker choice: ' + Player1);
-  return Player1;
-
-  // while (playerCount < 1) {
-  //   console.log("This is the player: " + Player1);
-  //   markerChoice = window.prompt(Player1 + ", please select a board marker by entering a single keyboard key input")
-  //   playerCount += 1;
-  //   console.log('Player\'s marker choice: ' + Player1);
-  // }
-  //   selectFirstPlayer();
-
-    // //return Player1 = markerChoice;
+  var player = Player1;
+  for (var i = 0; i < 2; i++){
+    player = (player == Player2) ? Player1 : Player2;
+    // player = markerChoice;
+    markerChoice = window.prompt(player + ", please select a board marker by entering a single keyboard key input");
+    playerMarkers.push(markerChoice);
+    }
+  selectFirstPlayer();
 }
-
-
 
 // function assignPlayerMarker(player){
 //     if (playerCount < 2) {
