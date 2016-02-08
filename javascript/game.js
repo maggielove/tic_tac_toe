@@ -5,7 +5,9 @@ window.onload = function() {
 patterns_1= [[(/ OO....../),0],[(/O..O.. ../),6], [(/......OO /),8],[(/.. ..O..O/),2], [(/ ..O..O../),0],[(/...... OO/),6], [(/..O..O.. /),8],[(/OO ....../),2], [(/ ...O...O/),0],[(/..O.O. ../),6], [(/O...O... /),8],[(/.. .O.O../),2], [(/O O....../),1],[(/O.. ..O../),3], [(/......O O/),7],[(/..O.. ..O/),5], [(/. ..O..O./),1],[(/... OO.../),3], [(/.O..O.. ./),7],[(/...OO .../),5]]
 patterns_2= [[(/  X . X  /),1],[(/ XX....../),0],[(/X..X.. ../),6], [(/......XX /),8],[(/.. ..X..X/),2],[(/ ..X..X../),0], [(/...... XX/),6],[(/..X..X.. /),8],[(/XX ....../),2], [(/ ...X...X/),0],[(/..X.X. ../),6],[(/X...X... /),8], [(/.. .X.X../),2],[(/X X....../),1],[(/X.. ..X../),3], [(/......X X/),7],[(/..X.. ..X/),5],[(/. ..X..X./),1], [(/... XX.../),3],[(/.X..X.. ./),7],[(/...XX .../),5], [(/ X X.. ../),0],[(/ ..X.. X /),6],[(/.. ..X X /),8], [(/ X ..X.. /),2],[(/  XX.. ../),0],[(/X.. .. X /),6], [(/.. .XX   /),8],[(/X  ..X.. /),2],[(/ X  ..X../),0], [(/ ..X..  X/),6],[(/..X..  X /),8],[(/X  ..X.. /),2]]
 patterns_3= [[(/OOO....../),'O'], [(/...OOO.../),'O'], [(/......OOO/),'O'], [(/O..O..O../),'O'], [(/.O..O..O./),'O'], [(/..O..O..O/),'O'], [(/O...O...O/),'O'], [(/..O.O.O../),'O'], [(/XXX....../),'X'], [(/...XXX.../),'X'], [(/......XXX/),'X'], [(/X..X..X../),'X'], [(/.X..X..X./),'X'], [(/..X..X..X/),'X'], [(/X...X...X/),'X'], [(/..X.X.X../),'X']]
-board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']; Player1 = 'X'; Player2 = 'O'; players = [Player1, Player2]; curr_turn = '';
+board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+
+Player1 = 'X'; Player2 = 'O'; players = [Player1, Player2]; curr_turn = '';
 
 // Player1 = 'X'; Player2 = 'O'
 
@@ -102,7 +104,7 @@ get_move= function(){
   return board.indexOf(' ')
 }
 
-exit= function(){process.exit()}
+// exit= function(){process.exit()}
 
 play= function(){
   var gameType;
@@ -180,20 +182,20 @@ playHumanHuman = function(curr_turn){
   for (var i = 0; i < boxes.length; i++){
     boxes[i].addEventListener('click', function(){
       winnerFound();
-      if (winnerFound || boxesClicked == 9) {
-        alert("Game over.");
+      if (winner !== '') {
+        alert("Game over. " + winner + "s win!!");
+      } else if (boxesClicked === 9) {
+        alert("Game over. All boxes clicked.")
       } else {
-      console.log('clicked div');
       this.innerHTML = curr_turn;
-      curr_turn= Player1? Player2 : Player1;
       boxesClicked += 1;
-      // if(move(res, curr_turn)){
-      //    if(winner()|| board_filled()) {exit()} else {
-      //    show();
-      //    playHumanHuman(curr_turn);
-      //  }
-      // }
-     }
+      console.log('boxes clicked:' + boxesClicked);
+      if (curr_turn == Player2 ) {
+        return curr_turn = Player1;
+      } else {
+        return curr_turn = Player2;
+       }
+      }
     })
   }
 }
@@ -212,21 +214,41 @@ function selectFirstPlayer(){
 }
 
 var playerCount = 0;
-function assignPlayerMarker(player){
-    // event.preventDefault();
-    if (playerCount < 2) {
-      console.log("This is the player: " + player);
-      var markerChoice = window.prompt(player + ", please select a board marker by entering a single keyboard key input")
-      playerCount += 1;
-      player = markerChoice;
-      console.log(player);
-      assignPlayerMarker(Player2);
-      return player;
-     } else {
-       selectFirstPlayer();
-     }
+var markerChoice = '';
+function assignPlayerMarker(){
+
+  markerChoice = window.prompt(Player1 + ", please select a board marker by entering a single keyboard key input");
+  Player1 = markerChoice;
+  console.log('Player\'s marker choice: ' + Player1);
+  return Player1;
+
+  // while (playerCount < 1) {
+  //   console.log("This is the player: " + Player1);
+  //   markerChoice = window.prompt(Player1 + ", please select a board marker by entering a single keyboard key input")
+  //   playerCount += 1;
+  //   console.log('Player\'s marker choice: ' + Player1);
+  // }
+  //   selectFirstPlayer();
+
+    // //return Player1 = markerChoice;
 }
 
+
+
+// function assignPlayerMarker(player){
+//     if (playerCount < 2) {
+//       console.log("This is the player: " + player);
+//       markerChoice = window.prompt(player + ", please select a board marker by entering a single keyboard key input")
+//       playerCount += 1;
+//       player = markerChoice;
+//       console.log('Player\'s marker choice: ' + player);
+//       assignPlayerMarker(Player2);
+//     } else {
+//       selectFirstPlayer();
+//     }
+// }
+
+var winner = '';
 winnerFound = function(){
   var boxOne = document.getElementsByClassName('box')[0];
   var boxTwo = document.getElementsByClassName('box')[1];
@@ -237,22 +259,41 @@ winnerFound = function(){
   var boxSeven = document.getElementsByClassName('box')[6];
   var boxEight = document.getElementsByClassName('box')[7];
   var boxNine = document.getElementsByClassName('box')[8];
-  console.log(boxOne.innerHTML);
-  console.log(boxFive.innerHTML);
-  if (boxOne.innerHTML === boxTwo.innerHTML === boxThree.innerHTML ||
-      boxFour.innerHTML === boxFive.innerHTML === boxSix.innerHTML ||
-      boxSeven.innerHTML === boxEight.innerHTML === boxNine.innerHTML ||
-      boxOne.innerHTML === boxFour.innerHTML === boxSeven.innerHTML ||
-      boxTwo.innerHTML === boxFive.innerHTML === boxEight.innerHTML ||
-      boxThree.innerHTML === boxSix.innerHTML === boxNine.innerHTML ||
-      boxOne.innerHTML === boxFive.innerHTML === boxNine.innerHTML ||
-      boxThree.innerHTML === boxFive.innerHTML === boxSeven.innerHTML
-    ){
-   return winnerFound = true;
- } else {
-   return winnerFound = false;
- }
-}
+
+  if ( boxOne.innerHTML == boxTwo.innerHTML){
+    if ( boxTwo.innerHTML == boxThree.innerHTML){
+       winner = boxOne.innerHTML;
+     }
+  } else if (boxOne.innerHTML == boxFour.innerHTML) {
+      if ( boxFour.innerHTML == boxSeven.innerHTML ) {
+         winner = boxSeven.innerHTML;
+      }
+    } else if (boxOne.innerHTML == boxFive.innerHTML) {
+        if (boxFive.innerHTML == boxNine.innerHTML){
+         winner = boxNine.innerHTML;
+      }
+    } else if (boxTwo.innerHTML == boxFive.innerHTML){
+        if (boxFive.innerHTML == boxEight.innerHTML){
+          winner = boxEight.innerHTML;
+        }
+    } else if (boxThree.innerHTML == boxSix.innerHTML){
+        if (boxSix.innerHTML == boxNine.innerHTML) {
+          winner = boxNine.innerHTML;
+        }
+    } else if (boxFour.innerHTML == boxFive.innerHTML) {
+      if (boxFive.innerHTML == boxSix.innerHTML){
+        winner = boxSix.innerHTML;
+      }
+    } else if (boxFive.innerHTML == boxThree.innerHTML) {
+      if (boxThree.innerHTML == boxSeven.innerHTML){
+        winner = boxSeven.innerHTML;
+      }
+    } else if (boxSeven.innerHTML == boxEight.innerHTML){
+      if (boxEight.innerHTML == boxNine.innerHTML){
+        winner = boxNine.innerHTML;
+      }
+    }
+} //ends playHumanHuman
 
 play()
 
