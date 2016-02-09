@@ -1,13 +1,17 @@
 window.onload = function() {
 
-// patterns_1: possible computer moves; patterns_2: player moves; patterns_3: winning patterns
+var boxes = document.getElementsByClassName("box");
+var boxOne = document.getElementsByClassName('box')[0];
+var boxTwo = document.getElementsByClassName('box')[1];
+var boxThree = document.getElementsByClassName('box')[2];
+var boxFour = document.getElementsByClassName('box')[3];
+var boxFive = document.getElementsByClassName('box')[4];
+var boxSix = document.getElementsByClassName('box')[5];
+var boxSeven = document.getElementsByClassName('box')[6];
+var boxEight = document.getElementsByClassName('box')[7];
+var boxNine = document.getElementsByClassName('box')[8];
 
-patterns_1= [[(/ OO....../),0],[(/O..O.. ../),6], [(/......OO /),8],[(/.. ..O..O/),2], [(/ ..O..O../),0],[(/...... OO/),6], [(/..O..O.. /),8],[(/OO ....../),2], [(/ ...O...O/),0],[(/..O.O. ../),6], [(/O...O... /),8],[(/.. .O.O../),2], [(/O O....../),1],[(/O.. ..O../),3], [(/......O O/),7],[(/..O.. ..O/),5], [(/. ..O..O./),1],[(/... OO.../),3], [(/.O..O.. ./),7],[(/...OO .../),5]]
-patterns_2= [[(/  X . X  /),1],[(/ XX....../),0],[(/X..X.. ../),6], [(/......XX /),8],[(/.. ..X..X/),2],[(/ ..X..X../),0], [(/...... XX/),6],[(/..X..X.. /),8],[(/XX ....../),2], [(/ ...X...X/),0],[(/..X.X. ../),6],[(/X...X... /),8], [(/.. .X.X../),2],[(/X X....../),1],[(/X.. ..X../),3], [(/......X X/),7],[(/..X.. ..X/),5],[(/. ..X..X./),1], [(/... XX.../),3],[(/.X..X.. ./),7],[(/...XX .../),5], [(/ X X.. ../),0],[(/ ..X.. X /),6],[(/.. ..X X /),8], [(/ X ..X.. /),2],[(/  XX.. ../),0],[(/X.. .. X /),6], [(/.. .XX   /),8],[(/X  ..X.. /),2],[(/ X  ..X../),0], [(/ ..X..  X/),6],[(/..X..  X /),8],[(/X  ..X.. /),2]]
-patterns_3= [[(/OOO....../),'O'], [(/...OOO.../),'O'], [(/......OOO/),'O'], [(/O..O..O../),'O'], [(/.O..O..O./),'O'], [(/..O..O..O/),'O'], [(/O...O...O/),'O'], [(/..O.O.O../),'O'], [(/XXX....../),'X'], [(/...XXX.../),'X'], [(/......XXX/),'X'], [(/X..X..X../),'X'], [(/.X..X..X./),'X'], [(/..X..X..X/),'X'], [(/X...X...X/),'X'], [(/..X.X.X../),'X']]
-board= [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
-
-Player1 = 'X'; Player2 = 'O'; players = [Player1, Player2]; curr_turn = '';
+Player1 = 'Player 1'; Player2 = 'Player 2'; players = [Player1, Player2]; curr_turn = '';
 
 // Player1 = 'X'; Player2 = 'O'
 
@@ -37,6 +41,7 @@ comp2= function(){
   console.log("Inside comp2 move");
   move(x, 0)
 }
+
 move= function(pos,x){
   if(x!=curr_turn){return false}
   // If the position argument is a number between 0 and 8, and that space on the board
@@ -49,8 +54,7 @@ move= function(pos,x){
   }
   return false
 }
-// board_display= function(){return ' '+board[0]+' |'+' '+board[1]+' |'+' '+board[2]+'\n===+===+===\n'+' '+board[3]+' |'+' '+board[4]+' |'+' '+board[5]+'\n===+===+===\n'+' '+board[6]+' |'+' '+board[7]+' |'+' '+board[8]}
-// show= function(){console.log(board_display())}
+
 board_filled= function(){
   x = get_move()
   // If the index of the element containing ' ' is -1, meaning it is not found,
@@ -64,21 +68,7 @@ board_filled= function(){
     }
   return false
 }
-// winner= function(){
-//   board_string= board.join('')
-//     the_winner= null
-//     for(i=0;i<patterns_3.length;i++){
-//       array= board_string.match(patterns_3[i][0])
-//         if(array){the_winner= patterns_3[i][1]}
-//     }
-//   if(the_winner){
-//     show()
-//     // Add a message saying who won the game.
-//       console.log('Game over. ' + the_winner + 's win!')
-//       return true
-//   }
-//   return false
-// }
+
 get_pattern_1_move= function(){
   board_string= board.join('')
     for(i=0;i<patterns_1.length;i++){
@@ -90,6 +80,7 @@ get_pattern_1_move= function(){
     // If no patterns match, return -1
   return -1
 }
+
 get_pattern_2_move= function(){
   board_string= board.join('')
     for(i=0;i<patterns_2.length;i++){
@@ -110,13 +101,13 @@ play= function(){
   var gameType;
   // show()
     /////// Allow user to choose game type (human v. human, comp v. comp, human v. comp)
-    var playerGameChoice = window.prompt("Choose game type:\n Type 9 for human v. human, \n Type 10 for computer v. computer, \n Type 11 for human v. computer");
+    var playerGameChoice = window.prompt("Choose game type:\n Type 1 for human v. human, \n Type 2 for computer v. computer, \n Type 3 for human v. computer");
     gameType = determineGameType(playerGameChoice);
     console.log(gameType);
     // --If the gameType is human-computer, use the game process as written.
     if (gameType === "human-comp") {
-      console.log("You've selected Human v. Computer");
-      playHumanComp();
+      alert("You've selected Human v. Computer. You are Player 1. Click on a square to begin.");
+      playHumanComp(Player1);
     //--If the gameType is computer-computer, use modified game flow that will let comp play itself.
     } else if (gameType === "comp-comp"){
       console.log("You've selected Computer v. Computer");
@@ -125,42 +116,156 @@ play= function(){
       //--If the gameType is human-human, use modified game flow that will let a second player play.
       else if (gameType == "human-human"){
         assignPlayerMarker();
-        // assignPlayerMarker(Player2);
-        // selectFirstPlayer();
       }
-
 }
 
 function determineGameType(userSelection){
   // event.preventDefault();
   console.log(userSelection.toString());
   var gameType = '';
-   if (userSelection == 9) {
+   if (userSelection == 1) {
       return gameType = "human-human";
-    } else if (userSelection == 10) {
+    } else if (userSelection == 2) {
         return gameType = "comp-comp";
-      } else if (userSelection == 11){
+      } else if (userSelection == 3){
         return gameType = "human-comp";
       } else {
-        console.log("Please enter 9, 10 or 11.")
+        console.log("Please enter 1, 2 or 3.")
       }
 }
 
 // If the user selects human v. computer game, follow this game flow:
+var boxesClicked = 0;
 function playHumanComp(){
-  console.log("Enter [0-8] to choose your spot on the board:")
-  /////// ALLOW USER TO CHOOSE WHICH PLAYER GOES FIRST
-  /////// ALLOW USER TO DECIDE WHAT MARKER EACH PLAYER WILL MARK SELECTIONS ON THE BOARD WITH.
-  process.stdin.on('data',function(res){
-    if(move(res, X)){
-      if(winner()||board_filled()) {exit()} else {
-        comp2()
-      if (move(x, O)){
-        if (winner()||board_filled()) {exit()} else {show()}
+  // var markHuman = function(){
+  //   this.innerHTML = 'Human';
+  // }
+  for (var i = 0; i < boxes.length; i++){
+    boxes[i].addEventListener('click', function(marked, makeComputerMove){
+      event.preventDefault();
+      winnerFound();
+      var marked = false;
+      if (winner !== '') {
+        return alert("Game over. " + winner + "s win!!");
+      } else if (boxesClicked >= 9) {
+        return alert("Game over. All boxes clicked.")
+      } else {
+        boxesClicked += 1;
+        console.log('boxes clicked: ' + boxesClicked);
+        // USE a CALLBACK FUNCTION that won't execute makeComputerMove() until after player marks square.
+
+        this.innerHTML = 'Human';
+        marked = true;
+        console.log(marked);
+        makeComputerMove();
+
+
         }
-      }
+      })
     }
-  })
+}
+
+
+// If there are two of the same marker with a space in between, create a block or a win
+// }
+//  else if (boxOne.innerHTML == boxThree.innerHTML) {
+//   boxTwo.innerHTML = 'Comp';
+//   return playHumanComp(Player1);
+// } else if (boxOne.innerHTML == boxSeven.innerHTML) {
+//   boxFour.innerHTML = 'Comp';
+//   return playHumanComp(Player1);
+// } else if (boxSeven.innerHTML == boxNine.innerHTML) {
+//   boxEight.innerHTML = 'Comp';
+//   return playHumanComp(Player1);
+// } else if (boxThree.innerHTML == boxNine.innerHTML){
+//   boxSix.innerHTML = 'Comp';
+//   return playHumanComp(Player1);
+
+
+var makeComputerMove = function() {
+  // check if middle space is empty
+  if (boxFive.innerHTML == '4'){
+    boxFive.innerHTML = 'Comp';
+    // boxesClicked += 1;
+    playHumanComp();
+  } else if ( boxOne.innerHTML == boxTwo.innerHTML) {
+    boxThree.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if ( boxOne.innerHTML == boxTwo.innerHTML){
+    // look to see where there are 2 of the same in a row, col or diagonal to either block human or make a win for the computer.
+    boxThree.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxOne.innerHTML == boxFour.innerHTML) {
+    boxSeven.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxOne.innerHTML == boxFive.innerHTML) {
+    boxNine.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxTwo.innerHTML == boxFive.innerHTML) {
+    boxEight.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxThree.innerHTML == boxSix.innerHTML){
+    boxNine.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxFour.innerHTML == boxFive.innerHTML){
+    boxSix.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxSeven.innerHTML == boxEight.innerHTML){
+    boxNine.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxThree.innerHTML == boxFive.innerHTML) {
+    boxSeven.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  // If there are no winning or blocking patterns, mark the first available square.
+  } else if (boxOne.innerHTML == '0'){
+    boxOne.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxTwo.innerHTML == '1') {
+    boxTwo.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxThree.innerHTML == '2') {
+    boxThree.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxFour.innerHTML == '3'){
+    boxFour.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxFive.innerHTML == '4'){
+    boxFour.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxSix.innerHTML == '5') {
+    boxSix.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxSeven.innerHTML == '6'){
+    boxSeven.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxEight.innerHTML == '7'){
+    boxEight.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else if (boxNine.innerHTML == '8') {
+    boxNine.innerHTML = 'Comp';
+    playHumanComp();
+    return;
+  } else {
+    alert('Game over.');
+  }
+
 }
 
 // If the user selects computer versus computer, follow this game flow.
@@ -216,7 +321,6 @@ function selectFirstPlayer(){
   // playHumanHuman(curr_turn);
 }
 
-// var playerCount = 0;
 var playerMarkers = [];
 var markerChoice = '';
 function assignPlayerMarker(){
@@ -230,31 +334,8 @@ function assignPlayerMarker(){
   selectFirstPlayer();
 }
 
-// function assignPlayerMarker(player){
-//     if (playerCount < 2) {
-//       console.log("This is the player: " + player);
-//       markerChoice = window.prompt(player + ", please select a board marker by entering a single keyboard key input")
-//       playerCount += 1;
-//       player = markerChoice;
-//       console.log('Player\'s marker choice: ' + player);
-//       assignPlayerMarker(Player2);
-//     } else {
-//       selectFirstPlayer();
-//     }
-// }
-
 var winner = '';
 winnerFound = function(){
-  var boxOne = document.getElementsByClassName('box')[0];
-  var boxTwo = document.getElementsByClassName('box')[1];
-  var boxThree = document.getElementsByClassName('box')[2];
-  var boxFour = document.getElementsByClassName('box')[3];
-  var boxFive = document.getElementsByClassName('box')[4];
-  var boxSix = document.getElementsByClassName('box')[5];
-  var boxSeven = document.getElementsByClassName('box')[6];
-  var boxEight = document.getElementsByClassName('box')[7];
-  var boxNine = document.getElementsByClassName('box')[8];
-
   if ( boxOne.innerHTML == boxTwo.innerHTML){
     if ( boxTwo.innerHTML == boxThree.innerHTML){
        winner = boxOne.innerHTML;
