@@ -17,25 +17,25 @@ window.onload = function() {
 
   var row = document.getElementsByClassName('row');
 
-  var firstRowValues = [];
+  var firstRowSum = 0;
 
-  var secondRowValues = [];
+  var secondRowSum = 0;
 
-  var thirdRowValues = [];
+  var thirdRowSum = 0;
 
-  // var firstColValues = [];
-  //
-  // var secondColValues = [];
-  //
-  // var thirdColValues = [];
-  //
-  // var leftDiagValues = [];
-  //
-  // var rightDiagValues = [];
+  var firstColSum = 0;
+
+  var secondColSum = 0;
+
+  var thirdColSum = 0;
+
+  var leftDiagSum = 0;
+
+  var rightDiagSum = 0;
 
   var renderBoard = function(){
     for (var i = 0; i < gameBoard.length; i++){
-      if (i % 3 === 0) {
+      if (i % 3 === 0 ) {
         var row = document.createElement('div');
         document.body.appendChild(row);
         row.className = 'row';
@@ -46,6 +46,23 @@ window.onload = function() {
       box.className = 'box';
       box.innerHTML = gameBoard[i];
       row.appendChild(box);
+      // distinguish boxes by column
+      if (box.id == '0' || box.id == '3' || box.id == '6'){
+        box.classList.add('first-col');
+      } else if (box.id == '1' || box.id == '4' || box.id == '7') {
+        box.classList.add('second-col');
+      } else {
+        box.classList.add('third-col');
+      }
+      // distinguish boxes on the diagonal
+      if (box.id == '4') {
+        box.classList.add('left-diag', 'right-diag');
+      }
+      else if (box.id == '0'|| box.id == '8'){
+        box.classList.add('left-diag');
+      } else if (box.id == '2' || box.id == '6'){
+        box.classList.add('right-diag');
+      }
     }
   }
 
@@ -56,19 +73,31 @@ window.onload = function() {
           this.innerHTML = playerMarkers[0];
           // Assign a value to the box to more determine the eventual winner.
           box.value = 2;
-
           // rowValues.push(box.value);
-          // console.log('row val: ' + row.value);
-          return curr_turn = Player1;
+          curr_turn = Player1;
         } else {
           this.innerHTML = playerMarkers[1];
           box.value = 1;
-          console.log(this.parentNode.id);
-          return curr_turn = Player2;
+          curr_turn = Player2;
          }
+         if (this.parentNode.id == 0){
+           firstRowSum += box.value;
+           console.log(firstRowSum);
+         } else if (this.parentNode.id == 3){
+           secondRowSum += box.value;
+           console.log(secondRowSum);
+         } else {
+           thirdRowSum += box.value;
+           console.log(thirdRowSum);
+         }
+        //  add in sum calcs for cols
+        // add in sum calcs for diags
+         return curr_turn;
       })
     }
   }
+
+
 
   renderBoard();
 
