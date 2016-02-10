@@ -10,27 +10,21 @@ window.onload = function() {
   Player1 = 'Player 1'; Player2 = 'Player 2'; players = [Player1, Player2]; curr_turn = '';
 
   var box = document.getElementsByClassName('box');
-
   var boxes = document.getElementsByClassName('box');
-
   var boxesClicked = 0;
 
   var row = document.getElementsByClassName('row');
 
+  // These sums will be used to determine computer moves and determine the winner
   var firstRowSum = 0;
-
   var secondRowSum = 0;
-
   var thirdRowSum = 0;
 
   var firstColSum = 0;
-
   var secondColSum = 0;
-
   var thirdColSum = 0;
 
   var leftDiagSum = 0;
-
   var rightDiagSum = 0;
 
   var renderBoard = function(){
@@ -69,35 +63,61 @@ window.onload = function() {
   var clickCard = function(){
     for (var i = 0; i < gameBoard.length; i++){
       boxes[i].addEventListener('click', function(){
-        if (curr_turn == Player2 ) {
-          this.innerHTML = playerMarkers[0];
-          // Assign a value to the box to more determine the eventual winner.
-          box.value = 2;
-          // rowValues.push(box.value);
-          curr_turn = Player1;
+        checkForWin();
+        if (winner == Player1 || winner == Player2 ){
+          alert('Game over! ' + winner + ' wins!');
         } else {
-          this.innerHTML = playerMarkers[1];
-          box.value = 1;
-          curr_turn = Player2;
-         }
-         if (this.parentNode.id == 0){
-           firstRowSum += box.value;
-           console.log(firstRowSum);
-         } else if (this.parentNode.id == 3){
-           secondRowSum += box.value;
-           console.log(secondRowSum);
-         } else {
-           thirdRowSum += box.value;
-           console.log(thirdRowSum);
-         }
-        //  add in sum calcs for cols
-        // add in sum calcs for diags
-         return curr_turn;
+          if (curr_turn == Player2 ) {
+            this.innerHTML = playerMarkers[0];
+            // Assign a value to the box to more determine the eventual winner.
+            box.value = -1;
+            curr_turn = Player1;
+          } else {
+            this.innerHTML = playerMarkers[1];
+            box.value = 1;
+            curr_turn = Player2;
+           }
+          //  add to the total value of the row the clicked box is in.
+           if (this.parentNode.id == 0){
+             firstRowSum += box.value;
+             console.log('firstRowSum: ' + firstRowSum);
+           } else if (this.parentNode.id == 3){
+             secondRowSum += box.value;
+             console.log('secondRowSum: ' + secondRowSum);
+           } else {
+             thirdRowSum += box.value;
+             console.log('thirdRowSum: ' + thirdRowSum);
+           }
+          //  Add to the total value of the column the box is in.
+          if (this.classList.contains('first-col')){
+            firstColSum += box.value;
+            console.log('firstColSum: ' + firstColSum);
+          } else if (this.classList.contains('second-col')){
+            secondColSum += box.value;
+            console.log('secondColSum: ' + secondColSum);
+          } else {
+            thirdColSum += box.value;
+            console.log('thirdColSum: ' + thirdColSum);
+          }
+          // If the box is on a diagonal, add to the total value of the diagonal
+          if (this.classList.contains('right-diag') && (this.classList.contains('left-diag'))){
+            rightDiagSum += box.value;
+            leftDiagSum += box.value;
+            console.log('rightDiagSum: ' + rightDiagSum);
+            console.log('leftDiagSum: ' + leftDiagSum);
+          }
+          else if (this.classList.contains('right-diag')){
+            rightDiagSum += box.value;
+            console.log('rightDiagSum: ' + rightDiagSum);
+          } else if (this.classList.contains('left-diag')){
+            leftDiagSum += box.value;
+            console.log('leftDiagSum: ' + leftDiagSum);
+          }
+           return curr_turn;
+       }
       })
     }
   }
-
-
 
   renderBoard();
 
@@ -176,7 +196,6 @@ window.onload = function() {
   }
 
   var makeComputerMove = function(){
-
     if (boxFive.innerHTML == '4'){
       boxFive.innerHTML = 'Comp';
       // boxesClicked += 1;
@@ -237,11 +256,21 @@ window.onload = function() {
 
   var winner = '';
   var checkForWin = function(){
-    // if sum of row || col || diag == 3,
-      // winner is Player1
-    // else if sum of row || col || diag == 6,
-      // winner is Player2
-    // else winner might be tie...
+    // Use the values of the sums of box values in each row, column or diagonal to determine the winner
+    if (firstRowSum == 3 || secondRowSum == 3 || thirdRowSum == 3 ||
+        firstColSum == 3 || secondColSum == 3 || thirdColSum == 3 ||
+        leftDiagSum == 3 || rightDiagSum == 3
+    ) {
+      winner = Player1;
+    } else if (
+        firstRowSum == -3 || secondRowSum == -3 || thirdRowSum == -3 ||
+        firstColSum == -3 || secondColSum == -3 || thirdColSum == -3 ||
+        leftDiagSum == -3 || rightDiagSum == -3
+    ){
+      winner = Player2;
+    } else {
+      winner = '';
+    }
   } //ends playHumanHuman
 
   play()
