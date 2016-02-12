@@ -7,7 +7,9 @@ window.onload = function() {
       "&nbsp", "&nbsp", "&nbsp"
     ]
 
-  Player1 = 'Player 1'; Player2 = 'Player 2'; players = [Player1, Player2]; curr_turn = '';
+  var gameType;
+
+  Player1 = 'Player 1'; Player2 = 'Player 2'; players = [Player1, Player2]; curr_turn = Player2;
 
   var box = document.getElementsByClassName('box');
   var boxes = document.getElementsByClassName('box');
@@ -15,17 +17,28 @@ window.onload = function() {
 
   var row = document.getElementsByClassName('row');
 
-  // These sums will be used to determine computer moves and determine the winner
-  var firstRowSum = 0;
-  var secondRowSum = 0;
-  var thirdRowSum = 0;
+  // These arrays will be used to determine computer moves and determine the winner
+  var firstRowVals = [];
+  var secondRowVals = [];
+  var thirdRowVals = [];
 
-  var firstColSum = 0;
-  var secondColSum = 0;
-  var thirdColSum = 0;
+  var firstColVals = [];
+  var secondColVals = [];
+  var thirdColVals = [];
 
-  var leftDiagSum = 0;
-  var rightDiagSum = 0;
+  var leftDiagVals = [];
+  var rightDiagVals = [];
+
+  // var firstRowSum = 0;
+  // var secondRowSum = 0;
+  // var thirdRowSum = 0;
+  //
+  // var firstColSum = 0;
+  // var secondColSum = 0;
+  // var thirdColSum = 0;
+  //
+  // var leftDiagSum = 0;
+  // var rightDiagSum = 0;
 
   var renderBoard = function(){
     for (var i = 0; i < gameBoard.length; i++){
@@ -60,79 +73,94 @@ window.onload = function() {
     }
   }
 
-  var clickCard = function(){
+  var markBox = function(){
     for (var i = 0; i < gameBoard.length; i++){
       boxes[i].addEventListener('click', function(){
-        checkForWin();
-        if (winner == Player1 || winner == Player2 ){
-          alert('Game over! ' + winner + ' wins!');
+        // checkForWin();
+        if (boxesClicked == 9 ){
+          checkForWin();
         } else {
-          if (curr_turn == Player2 ) {
-            this.innerHTML = playerMarkers[0];
-            // Assign a value to the box to more determine the eventual winner.
-            box.value = -1;
-            curr_turn = Player1;
-          } else {
-            this.innerHTML = playerMarkers[1];
-            box.value = 1;
-            curr_turn = Player2;
-           }
-          //  add to the total value of the row the clicked box is in.
-           if (this.parentNode.id == 0){
-             firstRowSum += box.value;
-             console.log('firstRowSum: ' + firstRowSum);
-           } else if (this.parentNode.id == 3){
-             secondRowSum += box.value;
-             console.log('secondRowSum: ' + secondRowSum);
-           } else {
-             thirdRowSum += box.value;
-             console.log('thirdRowSum: ' + thirdRowSum);
-           }
-          //  Add to the total value of the column the box is in.
-          if (this.classList.contains('first-col')){
-            firstColSum += box.value;
-            console.log('firstColSum: ' + firstColSum);
-          } else if (this.classList.contains('second-col')){
-            secondColSum += box.value;
-            console.log('secondColSum: ' + secondColSum);
-          } else {
-            thirdColSum += box.value;
-            console.log('thirdColSum: ' + thirdColSum);
+          this.innerHTML = playerMarkers[1];
+          this.value = 1;
+          console.log(this.value);
+          curr_turn = Player2;
           }
-          // If the box is on a diagonal, add to the total value of the diagonal
-          if (this.classList.contains('right-diag') && (this.classList.contains('left-diag'))){
-            rightDiagSum += box.value;
-            leftDiagSum += box.value;
-            console.log('rightDiagSum: ' + rightDiagSum);
-            console.log('leftDiagSum: ' + leftDiagSum);
-          }
-          else if (this.classList.contains('right-diag')){
-            rightDiagSum += box.value;
-            console.log('rightDiagSum: ' + rightDiagSum);
-          } else if (this.classList.contains('left-diag')){
-            leftDiagSum += box.value;
-            console.log('leftDiagSum: ' + leftDiagSum);
-          }
-           return curr_turn;
-       }
+          addMarkedClass();
+          boxesClicked += 1;
+          console.log('clicked boxes: ' + boxesClicked);
       })
+    }
+  }
+
+  // Add a class to boxes that have been marked to later determine which boxes to total in the checkForWin function.
+  var addMarkedClass = function(){
+    for (var i = 0; i < gameBoard.length; i++){
+      if ( (boxes[i].innerHTML !== '&nbsp;') && (!boxes[i].classList.contains('marked')) ){
+        boxes[i].classList.add('marked');
+      }
+    }
+  }
+
+  var addValueToBoard = function(){
+    for (var i = 0; i < gameBoard.length; i++){
+        //  add to the total value of the row the clicked box is in.
+        if ((boxes[i].parentNode.id == 0) && (boxes[i].innerHTML !== '&nbsp;')){
+          firstRowVals.push(boxes[i].value);
+          console.log('firstRowVals: ' + firstRowVals);
+        } else if ((boxes[i].parentNode.id == 3) && (boxes[i].innerHTML !== '&nbsp;')){
+          secondRowVals.push(boxes[i].value);
+          console.log('secRowVals: ' + secondRowVals);
+        }
+        else if (boxes[i].innerHTML !== '&nbsp;'){
+          thirdRowVals.push(boxes[i].value);
+          console.log('thirdRow Vals: ' + thirdRowVals);
+        }
+       //  Add to the total value of the column the box is in.
+       if (boxes[i].classList.contains('first-col') && (boxes[i].innerHTML !== '&nbsp;')){
+         firstColVals.push(boxes[i].value);
+         console.log('firstColVals: ' + firstColVals);
+       } else if ((boxes[i].classList.contains('second-col')) && (boxes[i].innerHTML !== '&nbsp;')){
+         secondColVals.push(boxes[i].value);
+         console.log('secondColVals: ' + secondColVals);
+       } else if(boxes[i].innerHTML !== '&nbsp;'){
+         thirdColVals.push(boxes[i].value);
+         console.log('thirdColVals: ' + thirdColVals);
+       }
+       // If the box is on a diagonal, add to the total value of the diagonal
+       if (boxes[i].classList.contains('right-diag') && boxes[i].classList.contains('left-diag') && (boxes[i].innerHTML !== '&nbsp;') ){
+         rightDiagVals.push(boxes[i].value);
+         leftDiagVals.push(boxes[i].value);
+         console.log('rightDiagVals: ' + rightDiagVals);
+         console.log('leftDiagVals: ' + leftDiagVals);
+       } else if (boxes[i].classList.contains('right-diag') && (boxes[i].innerHTML !== '&nbsp;')){
+         rightDiagVals.push(boxes[i].value);
+         console.log('rightDiagVals: ' + rightDiagVals);
+       } else if (boxes[i].classList.contains('left-diag') && (boxes[i].innerHTML !== '&nbsp;')){
+         leftDiagVals.push(boxes[i].value);
+         console.log('leftDiagVals: ' + leftDiagVals);
+       }
+      //   console.log(curr_turn);
+      //   if (gameType == 'human-comp'){
+      //     playHumanComp();
+      //   }
+
     }
   }
 
   renderBoard();
 
-  clickCard();
+  markBox();
+
+  // totalBoxes();
 
   // Player1 = 'X'; Player2 = 'O'
 
   play= function(){
-    var gameType;
-    // show()
       /////// Allow user to choose game type (human v. human, comp v. comp, human v. comp)
       var playerGameChoice = window.prompt("Choose game type:\n Type 1 for human v. human, \n Type 2 for computer v. computer, \n Type 3 for human v. computer");
       gameType = determineGameType(playerGameChoice);
       console.log(gameType);
-      // --If the gameType is human-computer, use the game process as written.
+      // --If the gameType is human-computer
       if (gameType === "human-comp") {
         alert("You've selected Human v. Computer. You are Player 1. Click on a square to begin.");
         playHumanComp(Player1);
@@ -162,46 +190,53 @@ window.onload = function() {
         }
   }
 
+  // CUTS from playHumanComp
+  // else if ( firstRowSum == -2){
+  //   // make a move in the empty spot in the first row
+  // } else if (secondRowSum == -2){
+  //
+  // } else if (thirdRowSum == -2){
+  //
+  // } else if (firstColSum == -2){
+  //
+  // } else if (secondColSum == -2){
+  //
+  // } else if (thirdColSum == -2){
+  //
+  // } else if (leftDiagSum == -2){
+  //
+  // } else if (rightDiagSum == -2){
+  //
+  // }
+
   // If the user selects human v. computer game, follow this game flow:
   function playHumanComp(){
-    // var markHuman = function(){
-    //   this.innerHTML = 'Human';
-    // }
-    // for (var i = 0; i < boxes.length; i++){
-    //   boxes[i].addEventListener('click', function(){
-    //     event.preventDefault();
-    //     winnerFound();
-    //     // var marked = false;
-    //     if (winner !== '') {
-    //       alert("Game over. " + winner + "s win!!");
-    //     } else if (boxesClicked >= 9) {
-    //       alert("Game over. All boxes clicked.")
-    //     } else {
-    //       boxesClicked += 1;
-    //       console.log('boxes clicked: ' + boxesClicked);
-    //       // USE a CALLBACK FUNCTION that won't execute makeComputerMove() until after player marks square.
-    //
-    //       this.innerHTML = 'Human';
-    //       curr_turn = Player2
-    //       // marked = true;
-    //       // console.log(marked);
-    //       if (curr_turn == Player2) {
-    //         makeComputerMove()
-    //       }else {
-    //         playHumanComp();
-    //       }
-    //       }
-    //     })
-    //   }
-  }
-
-  var makeComputerMove = function(){
-    if (boxFive.innerHTML == '4'){
-      boxFive.innerHTML = 'Comp';
-      // boxesClicked += 1;
-      // playHumanComp();
+    // To test, let's hard code current turn to be Player2/ comp
+    // curr_turn = Player2;
+    if (boxesClicked == 9){
+      checkForWin();
+    } else {
+      playerMarkers = ['C', 'H'];
+      console.log(curr_turn);
+      // The computer will be assigned Player2
+      if (curr_turn == Player2){
+        // totalBoxes();
+        // First, the program should check to see where the computer can win.
+        if (boxes[4].innerHTML == '&nbsp;'){
+          boxes[4].innerHTML = 'C';
+          boxes[4].value = -1;
+          console.log('box 4: ' + boxes[4].value);
+          addMarkedClass();
+          curr_turn = Player1;
+          } else {
+            curr_turn = Player1;
+            console.log('no moves left atm');
+          }
+          boxesClicked += 1;
+          console.log('clicked boxes: ' + boxesClicked);
+        }
+      }
     }
-  } // ends computer move
 
   // If the user selects computer versus computer, follow this game flow.
   function playCompComp(){
@@ -222,7 +257,7 @@ window.onload = function() {
     // else if no winner but all boxes clicked, alert Game over, announce tie
         // if {
         // } else {
-          // When cards are clicked, they will display the player marker according to the clickCard() function.
+          // When boxes are clicked, they will display the player marker according to the markBox() function.
           boxesClicked += 1;
           console.log('boxes clicked:' + boxesClicked);
         // }
@@ -256,22 +291,42 @@ window.onload = function() {
 
   var winner = '';
   var checkForWin = function(){
-    // Use the values of the sums of box values in each row, column or diagonal to determine the winner
-    if (firstRowSum == 3 || secondRowSum == 3 || thirdRowSum == 3 ||
-        firstColSum == 3 || secondColSum == 3 || thirdColSum == 3 ||
-        leftDiagSum == 3 || rightDiagSum == 3
-    ) {
-      winner = Player1;
-    } else if (
-        firstRowSum == -3 || secondRowSum == -3 || thirdRowSum == -3 ||
-        firstColSum == -3 || secondColSum == -3 || thirdColSum == -3 ||
-        leftDiagSum == -3 || rightDiagSum == -3
-    ){
-      winner = Player2;
-    } else {
-      winner = '';
+    var firstRowTotal = 0;
+
+    var sumFirstRow = function(){
+      firstRowVals.reduce(function(a, b){
+        firstRowTotal = a + b;
+        return firstRowTotal;
+      })
     }
-  } //ends playHumanHuman
+    addValueToBoard();
+    if (firstRowVals.length === 3){
+      sumFirstRow();
+      console.log(firstRowTotal);
+
+    }
+
+    // var getFirstRowSum = function(){
+    //   console.log('firstRowSum? ' + parseInt(firstRowSum));
+    // }
+    // Use the values of the sums of box values in each row, column or diagonal to determine the winner
+
+    // console.log('second col sum: ' + secondColSum);
+    // if (firstRowSum == 3 || secondRowSum == 3 || thirdRowSum == 3 ||
+    //     firstColSum == 3 || secondColSum == 3 || thirdColSum == 3 ||
+    //     leftDiagSum == 3 || rightDiagSum == 3
+    // ) {
+    //   winner = Player1;
+    // } else if (
+    //     firstRowSum == -3 || secondRowSum == -3 || thirdRowSum == -3 ||
+    //     firstColSum == -3 || secondColSum == -3 || thirdColSum == -3 ||
+    //     leftDiagSum == -3 || rightDiagSum == -3
+    // ){
+    //   winner = Player2;
+    // } else {
+    //   winner = '';
+    // }
+  } //ends checkForWin
 
   play()
 
