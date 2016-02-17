@@ -18,27 +18,28 @@ window.onload = function() {
   var row = document.getElementsByClassName('row');
 
   // These arrays will be used to determine computer moves and determine the winner
-  var firstRowVals = [];
-  var secondRowVals = [];
-  var thirdRowVals = [];
-
-  var firstColVals = [];
-  var secondColVals = [];
-  var thirdColVals = [];
-
-  var leftDiagVals = [];
-  var rightDiagVals = [];
-
-  // var firstRowSum = 0;
-  // var secondRowSum = 0;
-  // var thirdRowSum = 0;
+  // var firstRowVals = [];
+  // var secondRowVals = [];
+  // var thirdRowVals = [];
   //
-  // var firstColSum = 0;
-  // var secondColSum = 0;
-  // var thirdColSum = 0;
+  // var firstColVals = [];
+  // var secondColVals = [];
+  // var thirdColVals = [];
   //
-  // var leftDiagSum = 0;
-  // var rightDiagSum = 0;
+  // var leftDiagVals = [];
+  // var rightDiagVals = [];
+
+  // These sums will be used to determine computer moves and determine the winner
+  var firstRowSum = 0;
+  var secondRowSum = 0;
+  var thirdRowSum = 0;
+
+  var firstColSum = 0;
+  var secondColSum = 0;
+  var thirdColSum = 0;
+
+  var leftDiagSum = 0;
+  var rightDiagSum = 0;
 
   var renderBoard = function(){
     for (var i = 0; i < gameBoard.length; i++){
@@ -79,13 +80,59 @@ window.onload = function() {
         // checkForWin();
         if (boxesClicked == 9 ){
           checkForWin();
-        } else {
+        } else if (curr_turn == Player1) {
           this.innerHTML = playerMarkers[1];
           this.value = 1;
           console.log(this.value);
           curr_turn = Player2;
-          }
-          addMarkedClass();
+        } else if (curr_turn == Player2) {
+          this.innerHTML = playerMarkers[0];
+          this.value = -1;
+          console.log(this.value);
+          curr_turn = Player1;
+        }
+        if (this.parentNode.id == 0) {
+          firstRowSum += this.value;
+          // firstRowVals.push(boxes[i].value);
+          console.log('firstRowSum: ' + firstRowSum);
+        }
+      // else if ((boxes[i].parentNode.id == 3) && (boxes[i].classList.contains('marked'))){
+      //     secondRowSum += boxes[i].value;
+      //     console.log('secRowVals: ' + secondRowSum);
+      //   }
+      //   else if (boxes[i].classList.contains('marked')){
+      //     thirdRowSum += boxes[i].value;
+      //     console.log('thirdRow Vals: ' + thirdRowSum);
+      //   }
+      //  //  Add to the total value of the column the box is in.
+      //  if (boxes[i].classList.contains('first-col') && (boxes[i].classList.contains('marked'))){
+      //    firstColSum += boxes[i].value;
+      //    console.log('firstColVals: ' + firstColSum);
+      //  } else if ((boxes[i].classList.contains('second-col')) && (boxes[i].classList.contains('marked'))){
+      //    secondColSum += boxes[i].value;
+      //    console.log('secondColVals: ' + secondColSum);
+      //  } else if (boxes[i].classList.contains('marked')){
+      //    thirdColSum += boxes[i].value;
+      //    console.log('thirdColVals: ' + thirdColSum);
+      //  }
+      //  // If the box is on a diagonal, add to the total value of the diagonal
+      //  if (boxes[i].classList.contains('right-diag') && boxes[i].classList.contains('left-diag') && (boxes[i].classList.contains('marked')) ){
+      //    rightDiagSum += boxes[i].value;
+      //    leftDiagSum += boxes[i].value;
+      //    console.log('rightDiagVals: ' + rightDiagSum);
+      //    console.log('leftDiagVals: ' + leftDiagSum);
+      //  } else if (boxes[i].classList.contains('right-diag') && (boxes[i].classList.contains('marked'))){
+      //    rightDiagSum += boxes[i].value;
+      //    console.log('rightDiagVals: ' + rightDiagSum);
+      //  } else if (boxes[i].classList.contains('left-diag') && (boxes[i].classList.contains('marked'))){
+      //    leftDiagSum += boxes[i].value;
+      //    console.log('leftDiagVals: ' + leftDiagSum);
+      //  }
+          // addActiveClass();
+          // addValueToBoard();
+          //Once the value of the marked box has been added to the total row/col/diag value,
+          //// remove the 'marked' class so that the same box will not be added twice in one game.
+          // setTimeout(removeActiveClass, 500);
           boxesClicked += 1;
           console.log('clicked boxes: ' + boxesClicked);
       })
@@ -93,59 +140,33 @@ window.onload = function() {
   }
 
   // Add a class to boxes that have been marked to later determine which boxes to total in the checkForWin function.
-  var addMarkedClass = function(){
-    for (var i = 0; i < gameBoard.length; i++){
-      if ( (boxes[i].innerHTML !== '&nbsp;') && (!boxes[i].classList.contains('marked')) ){
-        boxes[i].classList.add('marked');
-      }
-    }
-  }
+  // var addActiveClass = function(){
+  //   for (var i = 0; i < gameBoard.length; i++){
+  //     if ( (boxes[i].innerHTML !== '&nbsp;') && (!boxes[i].classList.contains('active')) ){
+  //       boxes[i].classList.add('active');
+  //     }
+  //   };
+  // }
 
-  var addValueToBoard = function(){
-    for (var i = 0; i < gameBoard.length; i++){
-        //  add to the total value of the row the clicked box is in.
-        if ((boxes[i].parentNode.id == 0) && (boxes[i].innerHTML !== '&nbsp;')){
-          firstRowVals.push(boxes[i].value);
-          console.log('firstRowVals: ' + firstRowVals);
-        } else if ((boxes[i].parentNode.id == 3) && (boxes[i].innerHTML !== '&nbsp;')){
-          secondRowVals.push(boxes[i].value);
-          console.log('secRowVals: ' + secondRowVals);
-        }
-        else if (boxes[i].innerHTML !== '&nbsp;'){
-          thirdRowVals.push(boxes[i].value);
-          console.log('thirdRow Vals: ' + thirdRowVals);
-        }
-       //  Add to the total value of the column the box is in.
-       if (boxes[i].classList.contains('first-col') && (boxes[i].innerHTML !== '&nbsp;')){
-         firstColVals.push(boxes[i].value);
-         console.log('firstColVals: ' + firstColVals);
-       } else if ((boxes[i].classList.contains('second-col')) && (boxes[i].innerHTML !== '&nbsp;')){
-         secondColVals.push(boxes[i].value);
-         console.log('secondColVals: ' + secondColVals);
-       } else if(boxes[i].innerHTML !== '&nbsp;'){
-         thirdColVals.push(boxes[i].value);
-         console.log('thirdColVals: ' + thirdColVals);
-       }
-       // If the box is on a diagonal, add to the total value of the diagonal
-       if (boxes[i].classList.contains('right-diag') && boxes[i].classList.contains('left-diag') && (boxes[i].innerHTML !== '&nbsp;') ){
-         rightDiagVals.push(boxes[i].value);
-         leftDiagVals.push(boxes[i].value);
-         console.log('rightDiagVals: ' + rightDiagVals);
-         console.log('leftDiagVals: ' + leftDiagVals);
-       } else if (boxes[i].classList.contains('right-diag') && (boxes[i].innerHTML !== '&nbsp;')){
-         rightDiagVals.push(boxes[i].value);
-         console.log('rightDiagVals: ' + rightDiagVals);
-       } else if (boxes[i].classList.contains('left-diag') && (boxes[i].innerHTML !== '&nbsp;')){
-         leftDiagVals.push(boxes[i].value);
-         console.log('leftDiagVals: ' + leftDiagVals);
-       }
-      //   console.log(curr_turn);
-      //   if (gameType == 'human-comp'){
-      //     playHumanComp();
-      //   }
-
-    }
-  }
+  // var removeActiveClass = function(){
+  //   for (var i = 0; i < gameBoard.length; i++){
+  //     if (boxes[i].classList.contains('active')){
+  //         boxes[i].classList.remove('active');
+  //     }
+  //   }
+  // }
+  //
+  // var addValueToBoard = function(){
+  //   for (var i = 0; i < gameBoard.length; i++){
+  //        add to the total value of the row the clicked box is in.
+  //
+  //       console.log(curr_turn);
+  //       if (gameType == 'human-comp'){
+  //         playHumanComp();
+  //       }
+  //
+  //   }
+  // }
 
   renderBoard();
 
@@ -163,7 +184,7 @@ window.onload = function() {
       // --If the gameType is human-computer
       if (gameType === "human-comp") {
         alert("You've selected Human v. Computer. You are Player 1. Click on a square to begin.");
-        playHumanComp(Player1);
+        playHumanComp();
       //--If the gameType is computer-computer, use modified game flow that will let comp play itself.
       } else if (gameType === "comp-comp"){
         console.log("You've selected Computer v. Computer");
@@ -223,16 +244,16 @@ window.onload = function() {
         // totalBoxes();
         // First, the program should check to see where the computer can win.
         if (boxes[4].innerHTML == '&nbsp;'){
-          boxes[4].innerHTML = 'C';
-          boxes[4].value = -1;
+          // boxes[4].innerHTML = 'C';
+          boxes[4].click();
+          // boxes[4].value = -1;
           console.log('box 4: ' + boxes[4].value);
-          addMarkedClass();
+          // addActiveClass();
           curr_turn = Player1;
           } else {
-            curr_turn = Player1;
+            // curr_turn = Player1;
             console.log('no moves left atm');
           }
-          boxesClicked += 1;
           console.log('clicked boxes: ' + boxesClicked);
         }
       }
@@ -291,20 +312,20 @@ window.onload = function() {
 
   var winner = '';
   var checkForWin = function(){
-    var firstRowTotal = 0;
+    // var firstRowTotal = 0;
 
-    var sumFirstRow = function(){
-      firstRowVals.reduce(function(a, b){
-        firstRowTotal = a + b;
-        return firstRowTotal;
-      })
-    }
-    addValueToBoard();
-    if (firstRowVals.length === 3){
-      sumFirstRow();
-      console.log(firstRowTotal);
-
-    }
+    // var sumFirstRow = function(){
+    //   firstRowVals.reduce(function(a, b){
+    //     firstRowTotal = a + b;
+    //     return firstRowTotal;
+    //   })
+    // }
+    // addValueToBoard();
+    // if (firstRowVals.length === 3){
+    //   sumFirstRow();
+    //   console.log(firstRowTotal);
+    //
+    // }
 
     // var getFirstRowSum = function(){
     //   console.log('firstRowSum? ' + parseInt(firstRowSum));
